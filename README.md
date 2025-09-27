@@ -1,124 +1,117 @@
-# Konfigurasi Rclone ke Google Drive (Cross-Platform)
+# Download Rclone
 
-## 1. Download rclone
-
-| OS          | Langkah                                                                                                                                                          |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Windows** | Kunjungi [rclone.org/downloads](https://rclone.org/downloads/), pilih Windows zip, ekstrak ke folder, misal `C:\rclone\`                                         |
-| **macOS**   | Kunjungi [rclone.org/downloads](https://rclone.org/downloads/), pilih macOS zip, ekstrak ke folder, misal `~/rclone/`, lalu jalankan: `chmod +x ~/rclone/rclone` |
-| **Linux**   | Kunjungi [rclone.org/downloads](https://rclone.org/downloads/), pilih Linux zip, ekstrak ke folder, misal `~/rclone/`, lalu jalankan: `chmod +x ~/rclone/rclone` |
-
----
-
-## 2. Jalankan konfigurasi rclone
-
-* **Windows (PowerShell atau CMD):**
-
-```powershell
-C:\rclone\rclone.exe config
-```
-
-* **macOS / Linux (Terminal):**
+* Situs resmi: [https://rclone.org/downloads/](https://rclone.org/downloads/)
+* Pilih OS → ekstrak ke folder `backup/rclone/os/`
+* Pastikan executable:
 
 ```bash
-~/rclone/rclone config
+chmod +x backup/rclone/macos/rclone    # macOS
+chmod +x backup/rclone/linux/rclone    # Linux
+# Windows sudah executable (.exe)
 ```
 
----
+# Struktur Folder Project
 
-## 3. Buat remote baru
+```
+backup/
+├─ backup.sh
+├─ backup_config.conf
+└─ rclone/
+   ├─ macos/
+   │   └─ rclone
+   ├─ linux/
+   │   └─ rclone
+   └─ windows/
+       └─ rclone.exe
+```
 
-* Pilih `n` → **New remote**
-* Masukkan nama remote, misal:
+# Jalankan Konfigurasi Rclone
+
+**macOS / Linux:**
+
+```bash
+./rclone/rclone/macos/rclone config
+./rclone/rclone/linux/rclone config
+```
+
+**Windows (PowerShell):**
+
+```powershell
+.\rclone\windows\rclone.exe config
+```
+
+# Buat Remote Baru
+
+1. Pilih `n` → New remote
+2. Masukkan nama remote:
 
 ```
 name> gdrive
 ```
 
----
-
-## 4. Pilih tipe cloud
-
-* Ketik `drive` → **Google Drive**
+# Pilih Tipe Cloud
 
 ```
 Storage> drive
 ```
 
----
+# Client ID / Secret
 
-## 5. Client ID / Client Secret
+* Tekan **Enter** untuk default Google API atau isi jika punya client sendiri.
 
-* Jika ingin menggunakan default Google API, tekan **Enter**.
-* Jika punya client sendiri, masukkan `client_id` dan `client_secret`.
+# Scope Akses
 
----
+* Pilih `1` → Full access all files
 
-## 6. Scope akses
+# Root Folder ID
 
-* Pilih `1` → `Full access all files`
-  (untuk backup seluruh file ke Drive)
+* Kosong → tekan **Enter**
 
----
-
-## 7. Root folder ID
-
-* Biasanya kosong saja → tekan **Enter**
-
----
-
-## 8. Service Account
+# Service Account
 
 * Pilih `n` → Tidak menggunakan service account
 
----
-
-## 9. Edit advanced config
+# Advanced Config
 
 * Pilih `n` → Tidak
 
----
-
-## 10. Autenticasi
+# Autentikasi
 
 * Pilih `y` → Open URL di browser
-* Login ke akun Google Drive
-* Copy **verification code** dari browser ke terminal
+* Login ke Google Drive
+* Copy **verification code** ke terminal
 
----
-
-## 11. Konfirmasi konfigurasi
+# Konfirmasi
 
 * Pilih `y` → Save remote
 
----
+# Uji Koneksi
 
-## 12. Uji koneksi
-
-* **Windows:**
-
-```powershell
-C:\rclone\rclone.exe lsd gdrive:
-```
-
-* **macOS / Linux:**
+**macOS / Linux:**
 
 ```bash
-~/rclone/rclone lsd gdrive:
+./rclone/rclone/macos/rclone lsd gdrive:
+./rclone/rclone/linux/rclone lsd gdrive:
 ```
 
-Jika daftar folder muncul, berarti rclone sudah berhasil terkoneksi dengan Google Drive.
+**Windows:**
 
----
+```powershell
+.\rclone\windows\rclone.exe lsd gdrive:
+```
 
-## Tips Cross-Platform
+# Integrasi dengan backup.sh
 
-* Pastikan **path rclone di script sesuai OS**, misal:
+```bash
+# macOS
+RCLONE="$BASE_DIR/rclone/macos/rclone"
 
-| OS      | Contoh path rclone di script       |
-| ------- | ---------------------------------- |
-| Windows | `RCLONE="C:\\rclone\\rclone.exe"`  |
-| macOS   | `RCLONE="$BASE_DIR/rclone/rclone"` |
-| Linux   | `RCLONE="$BASE_DIR/rclone/rclone"` |
+# Linux
+RCLONE="$BASE_DIR/rclone/linux/rclone"
 
-* Gunakan nama remote sama dengan yang ada di script backup, misal `gdrive`.
+# Windows (PowerShell)
+RCLONE="$BASE_DIR\rclone\windows\rclone.exe"
+```
+
+* Nama remote harus sama (`gdrive`)
+* Upload backup ke: `BackupProjects/projectname/tahun_bulan_tanggal/`
